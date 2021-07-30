@@ -71,16 +71,49 @@ playBtn.addEventListener('click', () => {
 })
 
 
+
+
+
 //регулировка звука
+let btnClick = false
+let intervalVolumeListener
 const volumeDeviation = 0.05
+
+function volumeplus() {
+
+  if(btnClick == true) {
+    audio.volume = Math.min(1, audio.volume + volumeDeviation)
+    volumeRange.value = audio.volume * 100
+  }
+}
+function volumeminus() {
+  if(btnClick == true) {
+    audio.volume = Math.max(0, audio.volume - volumeDeviation)
+    volumeRange.value = audio.volume * 100
+  }
+}
+
+
 volumePlus.addEventListener('mousedown', () => {
-  audio.volume = Math.min(1, audio.volume + volumeDeviation)
-  volumeRange.value = audio.volume * 100
-})
+  btnClick = true
+  intervalVolumeListener = setInterval(volumeplus, 50)
+}, false)
+
+volumePlus.addEventListener('mouseup', () => {
+  btnClick = false
+  clearInterval(intervalVolumeListener)
+}, false)
+
 volumeMinus.addEventListener('mousedown', () => {
-  audio.volume = Math.max(0, audio.volume - volumeDeviation)
-  volumeRange.value = audio.volume * 100
-})
+  btnClick = true
+  intervalVolumeListener = setInterval(volumeminus, 50)
+}, false)
+
+volumeMinus.addEventListener('mouseup', () => {
+  btnClick = false
+  clearInterval(intervalVolumeListener)
+}, false)
+
 volumeRange.oninput = function() {
   audio.volume = volumeRange.value / 100
 }
@@ -109,5 +142,5 @@ prevBtn.addEventListener('click', prevSong)
 nextBtn.addEventListener('click', nextSong)
 audio.addEventListener('timeupdate', updateProgress)
 progressContainer.addEventListener('click', setProgress)
-
 audio.addEventListener('ended', nextSong)
+
