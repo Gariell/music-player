@@ -5,6 +5,8 @@ const nextBtn = document.querySelector('#next');
 
 const audio = document.querySelector('#audio');
 const progress = document.querySelector('.progress');
+const progressTimes = document.querySelector('#progressTime');
+const progressTimesCounter = document.querySelector('#progressTimeCounter');
 const progressContainer = document.querySelector('.progress-container');
 
 const title = document.querySelector('#title');
@@ -30,14 +32,35 @@ function loadSong(song) {
   title.innerText = song;
   audio.src = `music/${song}.mp3`;
   cover.src = `images/${song}.jpg`;
+  audioTimeCounter()
 }
 
+function audioTimeCounter() {
+
+  function str_pad_left(string,pad,length) {
+    return (new Array(length+1).join(pad)+string).slice(-length);
+  }
+  
+  setInterval(() => {
+
+
+    let audioDuration = audio.duration
+    let timeMinutes = Math.floor(audioDuration / 60);
+    let timeSeconds = audioDuration - timeMinutes * 60;
+    progressTimes.innerText = timeMinutes + ":" + Math.floor(timeSeconds)
+    let timeMinutesCounter = Math.floor(audio.currentTime / 60);
+    let timeSecondsCounter = audio.currentTime - timeMinutesCounter * 60;
+    progressTimesCounter.innerHTML = timeMinutesCounter + ":" + str_pad_left(Math.floor(timeSecondsCounter),'0',2)
+
+  }, 100);
+}
 
 function playSong() {
   musicContainer.classList.add('play');
   playBtn.querySelector('i.fas').classList.remove('fa-play')
   playBtn.querySelector('i.fas').classList.add('fa-pause')
   audio.play()
+  audioTimeCounter()
 }
 
 function pauseSong() {
@@ -51,6 +74,7 @@ function updateProgress(e) {
   const {duration, currentTime} = e.srcElement
   const progressPercent = (currentTime / duration) * 100
   progress.style.width = `${progressPercent}%`
+  
 }
 
 function setProgress (e) {
@@ -58,21 +82,8 @@ function setProgress (e) {
   const clickX = e.offsetX
   const duration = audio.duration
   audio.currentTime = (clickX / width) * duration
+  
 }
-
-// Event listeners
-playBtn.addEventListener('click', () => {
-  const isPlaying = musicContainer.classList.contains('play')
-  if(isPlaying) {
-    pauseSong()
-  } else {
-    playSong()
-  }
-})
-
-
-
-
 
 //регулировка звука
 let btnClick = false
@@ -92,7 +103,6 @@ function volumeminus() {
     volumeRange.value = audio.volume * 100
   }
 }
-
 
 volumePlus.addEventListener('mousedown', () => {
   btnClick = true
@@ -120,6 +130,17 @@ volumeRange.oninput = function() {
 
 
 
+// Event listeners
+playBtn.addEventListener('click', () => {
+  const isPlaying = musicContainer.classList.contains('play')
+  if(isPlaying) {
+    pauseSong()
+  } else {
+    playSong()
+  }
+})
+
+// функции переключения песен
 function prevSong() {
   songIndex--
   if(songIndex < 0) {
@@ -143,4 +164,4 @@ nextBtn.addEventListener('click', nextSong)
 audio.addEventListener('timeupdate', updateProgress)
 progressContainer.addEventListener('click', setProgress)
 audio.addEventListener('ended', nextSong)
-
+audioTimeCounter()

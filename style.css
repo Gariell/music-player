@@ -106,9 +106,12 @@ body {
   transform: translateY(0%);
   padding: 10px 10px 10px 150px;
   transition: transform 0.3s ease-in opacity 0.3s ease-in;
+  padding-right: 40px;
 }
 .music-info h4 {
   margin: 0;
+  font-size: 1.4em;
+  text-transform: uppercase;
   
 }
 .music-container.play .music-info {
@@ -171,4 +174,14 @@ body {
   border-radius: 50%;
   background: rgba(252, 169, 169, 1);
   cursor: pointer;
+}
+
+.progress-time {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+.progress-time span {
+  margin-right: 5px;
+  
 }
