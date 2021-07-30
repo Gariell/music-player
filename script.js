@@ -10,6 +10,12 @@ const progressContainer = document.querySelector('.progress-container');
 const title = document.querySelector('#title');
 const cover = document.querySelector('#cover');
 
+const volumePlus = document.querySelector('#volumePlus');
+const volumeMinus = document.querySelector('#volumeMinus');
+
+const volumeRange = document.getElementById("volumeRange");
+const volumeRangeOutput = volumeRange / 100
+
 // названия песен
 const songs = ['hey', 'summer', 'ukulele'];
 
@@ -31,7 +37,6 @@ function playSong() {
   musicContainer.classList.add('play');
   playBtn.querySelector('i.fas').classList.remove('fa-play')
   playBtn.querySelector('i.fas').classList.add('fa-pause')
-
   audio.play()
 }
 
@@ -39,12 +44,10 @@ function pauseSong() {
   musicContainer.classList.remove('play');
   playBtn.querySelector('i.fas').classList.add('fa-play')
   playBtn.querySelector('i.fas').classList.remove('fa-pause')
-
   audio.pause()
 }
 
 function updateProgress(e) {
-  // console.log(e.srcElement.currentTime)
   const {duration, currentTime} = e.srcElement
   const progressPercent = (currentTime / duration) * 100
   progress.style.width = `${progressPercent}%`
@@ -54,7 +57,6 @@ function setProgress (e) {
   const width = this.clientWidth
   const clickX = e.offsetX
   const duration = audio.duration
-
   audio.currentTime = (clickX / width) * duration
 }
 
@@ -67,6 +69,23 @@ playBtn.addEventListener('click', () => {
     playSong()
   }
 })
+
+
+//регулировка звука
+const volumeDeviation = 0.05
+volumePlus.addEventListener('mousedown', () => {
+  audio.volume = Math.min(1, audio.volume + volumeDeviation)
+  volumeRange.value = audio.volume * 100
+})
+volumeMinus.addEventListener('mousedown', () => {
+  audio.volume = Math.max(0, audio.volume - volumeDeviation)
+  volumeRange.value = audio.volume * 100
+})
+volumeRange.oninput = function() {
+  audio.volume = volumeRange.value / 100
+}
+
+
 
 function prevSong() {
   songIndex--
@@ -88,11 +107,7 @@ function nextSong() {
 // события песен
 prevBtn.addEventListener('click', prevSong)
 nextBtn.addEventListener('click', nextSong)
-
 audio.addEventListener('timeupdate', updateProgress)
-
-
 progressContainer.addEventListener('click', setProgress)
-
 
 audio.addEventListener('ended', nextSong)
