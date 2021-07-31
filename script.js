@@ -15,7 +15,7 @@ const volumeRange = document.getElementById("volumeRange");
 const volumeRangeOutput = volumeRange / 100
 
 // названия песен
-const songs = ['hey', 'summer', 'ukulele'];
+const songs =  ['hey', 'summer', 'ukulele'];
 
 // слежение за песнями
 let songIndex = 1;
@@ -28,26 +28,20 @@ function loadSong(song) {
   title.innerText = song;
   audio.src = `music/${song}.mp3`;
   cover.src = `images/${song}.jpg`;
-  audioTimeCounter()
 }
 
 // функция счета времени песни
 function audioTimeCounter() {
   function str_pad_left(string,pad,length) { return (new Array(length+1).join(pad)+string).slice(-length);}
-  setInterval(() => {
+  intervalAudioTimeCounter = setInterval(() => {
     let audioDuration = audio.duration
     let timeMinutes = Math.floor(audioDuration / 60);
     let timeSeconds = audioDuration - timeMinutes * 60;
     let timeMinutesCounter = Math.floor(audio.currentTime / 60);
     let timeSecondsCounter = audio.currentTime - timeMinutesCounter * 60;
     audioTime = timeMinutes + ":" + Math.floor(timeSeconds) + " / " + timeMinutesCounter + ":" + str_pad_left(Math.floor(timeSecondsCounter),'0',2)
-    // if (audioTime == NaN) {
-    //   progressTimes.innerText = "0:00 / 0:00"
-    // }else { 
-      progressTimes.innerText = audioTime 
-    // }
-    console.log(audioTime )
-  }, 1000);
+    progressTimes.innerText = audioTime 
+  }, 100);
 }
 
 // функция начала воспроизведения песни
@@ -56,9 +50,7 @@ function playSong() {
   playBtn.querySelector('i.fas').classList.remove('fa-play')
   playBtn.querySelector('i.fas').classList.add('fa-pause')
   audio.play()
-  audio.onloadedmetadata = function() {
-    audioTimeCounter()
-  }
+  audioTimeCounter()
 }
 
 // функция приостановки воспроизведения песни
@@ -67,6 +59,7 @@ function pauseSong() {
   playBtn.querySelector('i.fas').classList.add('fa-play')
   playBtn.querySelector('i.fas').classList.remove('fa-pause')
   audio.pause()
+  clearInterval(intervalAudioTimeCounter)
 }
 
 // функция обновления полоски прогресса песни
@@ -100,6 +93,9 @@ function volumeminus() {
     volumeRange.value = audio.volume * 100
   }
 }
+volumeRange.oninput = function() {
+  audio.volume = volumeRange.value / 100
+}
 
 // Event listeners
 playBtn.addEventListener('click', () => {
@@ -118,14 +114,10 @@ volumeMinus.addEventListener('mousedown', () => {
   btnClick = true
   intervalVolumeListener = setInterval(volumeminus, 50)
 }, false)
-
 volumeMinus.addEventListener('mouseup', () => {
   btnClick = false
   clearInterval(intervalVolumeListener)
 }, false)
-volumeRange.oninput = function() {
-  audio.volume = volumeRange.value / 100
-}
 
 // функции переключения песен
 function prevSong() {
@@ -133,15 +125,16 @@ function prevSong() {
   if(songIndex < 0) {
     songIndex = songs.length - 1
   }
+  clearInterval(intervalAudioTimeCounter)
   loadSong(songs[songIndex])
-  playSong()
-  
+  playSong()  
 }
 function nextSong() {
   songIndex++
   if(songIndex > songs.length - 1) {
     songIndex = 0
   }
+  clearInterval(intervalAudioTimeCounter)
   loadSong(songs[songIndex])
   playSong()
 }
@@ -152,6 +145,5 @@ nextBtn.addEventListener('click', nextSong)
 audio.addEventListener('timeupdate', updateProgress)
 progressContainer.addEventListener('click', setProgress)
 audio.addEventListener('ended', nextSong)
-audioTimeCounter()
 
 
