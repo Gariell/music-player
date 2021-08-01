@@ -27,7 +27,7 @@
       <audio src="music/ukulele.mp3" id="audio"></audio>
 
       <div class="img-container">
-        <img src="images/ukulele.jpg" alt="music-cover" id="cover" />
+        <img src="images/ukulele.jpg" alt="music-cover" id="cover" onerror="imageCoverError()" />
       </div>
 
       <div class="navigation">
@@ -55,6 +55,11 @@
       </div>
 
     </div>
+    <script>
+      //список песен
+      
+      const songs =  ['hey', 'summer', 'ukulele', 'Nyanpasy', 'Sanctuary-Guardian'];
+    </script>
     <script src="script.js"></script>
   </body>
 </html>

@@ -14,8 +14,13 @@ const volumeMinus = document.querySelector('#volumeMinus');
 const volumeRange = document.getElementById("volumeRange");
 const volumeRangeOutput = volumeRange / 100
 
+let loadImagesSongs = true
+let loadSongError = false
+
 // названия песен
-const songs =  ['hey', 'summer', 'ukulele'];
+// const songs =  ['hey', 'summer', 'ukulele'];
+
+
 
 // слежение за песнями
 let songIndex = 1;
@@ -23,34 +28,47 @@ let songIndex = 1;
 // инициализация загрузки песни в ДОМ
 loadSong(songs[songIndex]);
 
+
 // обновление деталей песни
+cover.onerror = function() {
+  cover.src = `images/summer.jpg`;
+}
 function loadSong(song) {
   title.innerText = song;
   audio.src = `music/${song}.mp3`;
   cover.src = `images/${song}.jpg`;
 }
 
+
+
 // функция счета времени песни
 function audioTimeCounter() {
   function str_pad_left(string,pad,length) { return (new Array(length+1).join(pad)+string).slice(-length);}
+
   intervalAudioTimeCounter = setInterval(() => {
     let audioDuration = audio.duration
     let timeMinutes = Math.floor(audioDuration / 60);
     let timeSeconds = audioDuration - timeMinutes * 60;
     let timeMinutesCounter = Math.floor(audio.currentTime / 60);
     let timeSecondsCounter = audio.currentTime - timeMinutesCounter * 60;
-    audioTime = timeMinutes + ":" + Math.floor(timeSeconds) + " / " + timeMinutesCounter + ":" + str_pad_left(Math.floor(timeSecondsCounter),'0',2)
+    audioTime = timeMinutes + ":" + str_pad_left(Math.floor(timeSeconds),'0',2) + " / " + timeMinutesCounter + ":" + str_pad_left(Math.floor(timeSecondsCounter),'0',2)
     progressTimes.innerText = audioTime 
-  }, 100);
+    console.log(audioTime)
+  }, 500);
 }
 
 // функция начала воспроизведения песни
 function playSong() {
-  musicContainer.classList.add('play');
-  playBtn.querySelector('i.fas').classList.remove('fa-play')
-  playBtn.querySelector('i.fas').classList.add('fa-pause')
-  audio.play()
-  audioTimeCounter()
+  
+  clearInterval(intervalAudioTimeCounter)
+  
+  setTimeout(() => {
+    playBtn.querySelector('i.fas').classList.remove('fa-play')
+    playBtn.querySelector('i.fas').classList.add('fa-pause')
+    audioTimeCounter()
+    audio.play()
+    musicContainer.classList.add('play');
+  }, 10);
 }
 
 // функция приостановки воспроизведения песни
@@ -81,6 +99,7 @@ function setProgress (e) {
 let btnClick = false
 let intervalVolumeListener
 const volumeDeviation = 0.05
+
 function volumeplus() {
   if(btnClick == true) {
     audio.volume = Math.min(1, audio.volume + volumeDeviation)
@@ -128,6 +147,7 @@ function prevSong() {
   clearInterval(intervalAudioTimeCounter)
   loadSong(songs[songIndex])
   playSong()  
+  
 }
 function nextSong() {
   songIndex++
@@ -137,6 +157,7 @@ function nextSong() {
   clearInterval(intervalAudioTimeCounter)
   loadSong(songs[songIndex])
   playSong()
+ 
 }
 
 // события песен
@@ -147,3 +168,4 @@ progressContainer.addEventListener('click', setProgress)
 audio.addEventListener('ended', nextSong)
 
 
+audioTimeCounter()
