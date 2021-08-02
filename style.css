@@ -138,11 +138,13 @@ button:hover  {
   margin-bottom: 10px;
   font-weight: bold;
   cursor: pointer;
+  font-size: 20px;
   /* height: 0px; */
   opacity: 0;
 }
 #music-playlist .song-link:hover{
   color: #fe8daa;
+  transition: 0s;
 }
 #music-playlist.active{
   transform: translateY(100%);
@@ -152,7 +154,7 @@ button:hover  {
 #music-playlist.active .song-link{
   opacity: 1;
   transition-delay: 0.1s;
-  transition-duration: 0.2s;
+  transition-duration: 0.1s;
 }
 #music-playlist-btn {
   z-index: 2;
