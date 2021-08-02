@@ -23,6 +23,9 @@ body {
 h1 {
   color: #3e3e3e;
 }
+button:hover  {
+  opacity: 0.8;
+}
 .music-container {
   background-color: #fff;
   border-radius: 15px;
@@ -111,6 +114,64 @@ h1 {
   padding: 10px 10px 10px 150px;
   transition: transform 0.3s ease-in opacity 0.3s ease-in;
   padding-right: 40px;
+}
+#music-playlist {
+  background-color: rgba(255,255,255, 0.5);
+  border-radius:  0 0 15px 15px;
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  width: calc(100% - 40px);
+  opacity: 0;
+  transform: translateY(0%);
+  padding: 10px 10px 20px 150px;
+  transition: transform 0.3s ease-in opacity 0.3s ease-in;
+  padding-right: 40px;
+  display: flex;
+  flex-direction: column;
+  z-index: -1;
+}
+#music-playlist .song-link{
+  text-transform: uppercase;
+  color: #3e3e3e;
+  text-decoration: none;
+  margin-bottom: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  /* height: 0px; */
+  opacity: 0;
+}
+#music-playlist .song-link:hover{
+  color: #fe8daa;
+}
+#music-playlist.active{
+  transform: translateY(100%);
+  opacity: 1;
+  transition: 0.2s;
+}
+#music-playlist.active .song-link{
+  opacity: 1;
+  transition-delay: 0.1s;
+  transition-duration: 0.2s;
+}
+#music-playlist-btn {
+  z-index: 2;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  outline: none;
+}
+#music-playlist-btn img {
+  height: 30px;
+  padding-top: 5px;
+}
+#music-playlist-btn:hover {
+  z-index: 2;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  cursor: pointer;
 }
 .music-info h4 {
   margin: 0;
