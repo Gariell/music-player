@@ -132,7 +132,7 @@ button:hover  {
   z-index: -1;
 }
 #music-playlist .song-link{
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   color: #3e3e3e;
   text-decoration: none;
   margin-bottom: 10px;
