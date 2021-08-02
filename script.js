@@ -1,3 +1,4 @@
+
 const musicContainer = document.querySelector('.music-container');
 const playBtn = document.querySelector('#play');
 const prevBtn = document.querySelector('#prev');
@@ -14,20 +15,21 @@ const volumeMinus = document.querySelector('#volumeMinus');
 const volumeRange = document.getElementById("volumeRange");
 const volumeRangeOutput = volumeRange / 100
 
+let LSVolumeLavelValue = localStorage.getItem('LSVolumeLavel');
+audio.volume = LSVolumeLavelValue;
+volumeRange.value = LSVolumeLavelValue * 100
+
 let loadImagesSongs = true
 let loadSongError = false
 
 // названия песен
 // const songs =  ['hey', 'summer', 'ukulele'];
 
-
-
 // слежение за песнями
 let songIndex = 1;
 
 // инициализация загрузки песни в ДОМ
 loadSong(songs[songIndex]);
-
 
 // обновление деталей песни
 cover.onerror = function() {
@@ -39,8 +41,6 @@ function loadSong(song) {
   cover.src = `images/${song}.jpg`;
 }
 
-
-
 // функция счета времени песни
 function audioTimeCounter() {
   function str_pad_left(string,pad,length) { return (new Array(length+1).join(pad)+string).slice(-length);}
@@ -51,7 +51,7 @@ function audioTimeCounter() {
     let timeSeconds = audioDuration - timeMinutes * 60;
     let timeMinutesCounter = Math.floor(audio.currentTime / 60);
     let timeSecondsCounter = audio.currentTime - timeMinutesCounter * 60;
-    audioTime = timeMinutes + ":" + str_pad_left(Math.floor(timeSeconds),'0',2) + " / " + timeMinutesCounter + ":" + str_pad_left(Math.floor(timeSecondsCounter),'0',2)
+    audioTime =  timeMinutesCounter + ":" + str_pad_left(Math.floor(timeSecondsCounter),'0',2)  + " / " + timeMinutes + ":" + str_pad_left(Math.floor(timeSeconds),'0',2)
     progressTimes.innerText = audioTime 
     console.log(audioTime)
   }, 500);
@@ -95,6 +95,11 @@ function setProgress (e) {
   audio.currentTime = (clickX / width) * duration
 }
 
+// функция записи cookie уровня громкости
+function setVolumeCoocie(){
+  localStorage.setItem('LSVolumeLavel', audio.volume)
+}
+
 //регулировка звука
 let btnClick = false
 let intervalVolumeListener
@@ -104,17 +109,21 @@ function volumeplus() {
   if(btnClick == true) {
     audio.volume = Math.min(1, audio.volume + volumeDeviation)
     volumeRange.value = audio.volume * 100
+    setVolumeCoocie()
   }
 }
 function volumeminus() {
   if(btnClick == true) {
     audio.volume = Math.max(0, audio.volume - volumeDeviation)
     volumeRange.value = audio.volume * 100
+    setVolumeCoocie()
   }
 }
 volumeRange.oninput = function() {
-  audio.volume = volumeRange.value / 100
+  audio.volume  = volumeRange.value / 100
+  setVolumeCoocie()
 }
+
 
 // Event listeners
 playBtn.addEventListener('click', () => {
@@ -124,19 +133,25 @@ playBtn.addEventListener('click', () => {
 volumePlus.addEventListener('mousedown', () => {
   btnClick = true
   intervalVolumeListener = setInterval(volumeplus, 50)
+  
 }, false)
 volumePlus.addEventListener('mouseup', () => {
   btnClick = false
   clearInterval(intervalVolumeListener)
+  setVolumeCoocie()
 }, false)
 volumeMinus.addEventListener('mousedown', () => {
   btnClick = true
   intervalVolumeListener = setInterval(volumeminus, 50)
+  
 }, false)
 volumeMinus.addEventListener('mouseup', () => {
   btnClick = false
   clearInterval(intervalVolumeListener)
+  setVolumeCoocie()
 }, false)
+
+
 
 // функции переключения песен
 function prevSong() {
@@ -157,7 +172,7 @@ function nextSong() {
   clearInterval(intervalAudioTimeCounter)
   loadSong(songs[songIndex])
   playSong()
- 
+
 }
 
 // события песен
