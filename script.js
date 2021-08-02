@@ -1,4 +1,3 @@
-
 const musicContainer = document.querySelector('.music-container');
 const playBtn = document.querySelector('#play');
 const prevBtn = document.querySelector('#prev');
@@ -15,6 +14,7 @@ const volumeMinus = document.querySelector('#volumeMinus');
 const volumeRange = document.getElementById("volumeRange");
 const volumeRangeOutput = volumeRange / 100
 
+//загрузка параметров звука из local Storage
 let LSVolumeLavelValue = localStorage.getItem('LSVolumeLavel');
 audio.volume = LSVolumeLavelValue;
 volumeRange.value = LSVolumeLavelValue * 100
@@ -31,42 +31,58 @@ let songIndex = 1;
 // инициализация загрузки песни в ДОМ
 loadSong(songs[songIndex]);
 
+
+
 // обновление деталей песни
-cover.onerror = function() {
-  cover.src = `images/summer.jpg`;
-}
+// cover.onerror = function() {
+//   cover.src = `images/summer.jpg`;
+// }
+// function loadSong(song) {
+//   title.innerText = song;
+//   audio.src = `music/${song}.mp3`;
+//   cover.src = `images/${song}.jpg`;
+// }
 function loadSong(song) {
   title.innerText = song;
   audio.src = `music/${song}.mp3`;
-  cover.src = `images/${song}.jpg`;
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", '/images/' + `${song}.jpg`, true);
+  xhr.onload = function () {
+    if (xhr.status != 200) {
+      cover.src = `images/summer.jpg`;
+    } 
+  };
+  xhr.send();
 }
 
 // функция счета времени песни
 function audioTimeCounter() {
-  function str_pad_left(string,pad,length) { return (new Array(length+1).join(pad)+string).slice(-length);}
+  function str_pad_left(string, pad, length) {
+    return (new Array(length + 1).join(pad) + string).slice(-length);
+  }
 
   intervalAudioTimeCounter = setInterval(() => {
-    let audioDuration = audio.duration
+    let audioDuration = audio.duration;
     let timeMinutes = Math.floor(audioDuration / 60);
     let timeSeconds = audioDuration - timeMinutes * 60;
     let timeMinutesCounter = Math.floor(audio.currentTime / 60);
     let timeSecondsCounter = audio.currentTime - timeMinutesCounter * 60;
-    audioTime =  timeMinutesCounter + ":" + str_pad_left(Math.floor(timeSecondsCounter),'0',2)  + " / " + timeMinutes + ":" + str_pad_left(Math.floor(timeSeconds),'0',2)
-    progressTimes.innerText = audioTime 
-    console.log(audioTime)
+    audioTime = timeMinutesCounter + ":" + str_pad_left(Math.floor(timeSecondsCounter), '0', 2) + " / " + timeMinutes + ":" + str_pad_left(Math.floor(timeSeconds), '0', 2);
+    progressTimes.innerText = audioTime;
+    console.log(audioTime);
   }, 500);
 }
 
 // функция начала воспроизведения песни
 function playSong() {
-  
-  clearInterval(intervalAudioTimeCounter)
-  
+
+  clearInterval(intervalAudioTimeCounter);
+
   setTimeout(() => {
-    playBtn.querySelector('i.fas').classList.remove('fa-play')
-    playBtn.querySelector('i.fas').classList.add('fa-pause')
-    audioTimeCounter()
-    audio.play()
+    playBtn.querySelector('i.fas').classList.remove('fa-play');
+    playBtn.querySelector('i.fas').classList.add('fa-pause');
+    audioTimeCounter();
+    audio.play();
     musicContainer.classList.add('play');
   }, 10);
 }
@@ -74,66 +90,73 @@ function playSong() {
 // функция приостановки воспроизведения песни
 function pauseSong() {
   musicContainer.classList.remove('play');
-  playBtn.querySelector('i.fas').classList.add('fa-play')
-  playBtn.querySelector('i.fas').classList.remove('fa-pause')
-  audio.pause()
-  clearInterval(intervalAudioTimeCounter)
+  playBtn.querySelector('i.fas').classList.add('fa-play');
+  playBtn.querySelector('i.fas').classList.remove('fa-pause');
+  audio.pause();
+  clearInterval(intervalAudioTimeCounter);
 }
 
 // функция обновления полоски прогресса песни
 function updateProgress(e) {
-  const {duration, currentTime} = e.srcElement
+  const {
+    duration,
+    currentTime
+  } = e.srcElement
   const progressPercent = (currentTime / duration) * 100
   progress.style.width = `${progressPercent}%`
 }
 
 // функция перемотки песни при клике на полосу прогресса
-function setProgress (e) {
-  const width = this.clientWidth
-  const clickX = e.offsetX
-  const duration = audio.duration
-  audio.currentTime = (clickX / width) * duration
+function setProgress(e) {
+  const width = this.clientWidth;
+  const clickX = e.offsetX;
+  const duration = audio.duration;
+  audio.currentTime = (clickX / width) * duration;
 }
 
 // функция записи cookie уровня громкости
-function setVolumeCoocie(){
-  localStorage.setItem('LSVolumeLavel', audio.volume)
+function setVolumeCoocie() {
+  localStorage.setItem('LSVolumeLavel', audio.volume);
 }
 
 //регулировка звука
-let btnClick = false
-let intervalVolumeListener
-const volumeDeviation = 0.05
+let btnClick = false;
+let intervalVolumeListener;
+const volumeDeviation = 0.05;
 
 function volumeplus() {
-  if(btnClick == true) {
-    audio.volume = Math.min(1, audio.volume + volumeDeviation)
-    volumeRange.value = audio.volume * 100
-    setVolumeCoocie()
+  if (btnClick == true) {
+    audio.volume = Math.min(1, audio.volume + volumeDeviation);
+    volumeRange.value = audio.volume * 100;
+    setVolumeCoocie();
   }
 }
 function volumeminus() {
-  if(btnClick == true) {
-    audio.volume = Math.max(0, audio.volume - volumeDeviation)
-    volumeRange.value = audio.volume * 100
-    setVolumeCoocie()
+  if (btnClick == true) {
+    audio.volume = Math.max(0, audio.volume - volumeDeviation);
+    volumeRange.value = audio.volume * 100;
+    setVolumeCoocie();
   }
 }
-volumeRange.oninput = function() {
-  audio.volume  = volumeRange.value / 100
-  setVolumeCoocie()
+volumeRange.oninput = function () {
+  audio.volume = volumeRange.value / 100;
+  setVolumeCoocie();
 }
 
 
 // Event listeners
 playBtn.addEventListener('click', () => {
   const isPlaying = musicContainer.classList.contains('play')
-  if(isPlaying) {pauseSong()} else {playSong()}
+  if (isPlaying) {
+    pauseSong()
+  } else {
+    playSong()
+  }
 })
 volumePlus.addEventListener('mousedown', () => {
   btnClick = true
   intervalVolumeListener = setInterval(volumeplus, 50)
-  
+
 }, false)
 volumePlus.addEventListener('mouseup', () => {
   btnClick = false
@@ -143,7 +166,7 @@ volumePlus.addEventListener('mouseup', () => {
 volumeMinus.addEventListener('mousedown', () => {
   btnClick = true
   intervalVolumeListener = setInterval(volumeminus, 50)
-  
+
 }, false)
 volumeMinus.addEventListener('mouseup', () => {
   btnClick = false
@@ -156,17 +179,18 @@ volumeMinus.addEventListener('mouseup', () => {
 // функции переключения песен
 function prevSong() {
   songIndex--
-  if(songIndex < 0) {
+  if (songIndex < 0) {
     songIndex = songs.length - 1
   }
   clearInterval(intervalAudioTimeCounter)
   loadSong(songs[songIndex])
-  playSong()  
-  
+  playSong()
+
 }
+
 function nextSong() {
   songIndex++
-  if(songIndex > songs.length - 1) {
+  if (songIndex > songs.length - 1) {
     songIndex = 0
   }
   clearInterval(intervalAudioTimeCounter)
