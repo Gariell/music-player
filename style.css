@@ -132,24 +132,31 @@ button:hover  {
   z-index: -1;
 }
 #music-playlist .song-link{
-  /* text-transform: uppercase; */
   color: #3e3e3e;
   text-decoration: none;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   font-weight: bold;
   cursor: pointer;
   font-size: 20px;
-  /* height: 0px; */
+  position: relative;
   opacity: 0;
+  padding: 7px 10px;
+  margin: 0px -10px 0 -10px;
+  border-radius: 5px;
 }
 #music-playlist .song-link:hover{
-  color: #fe8daa;
-  transition: 0s;
+  color: #000000;
+  transition-delay: 0s;
+  transition-duration: 0s;
 }
+
 #music-playlist.active{
   transform: translateY(100%);
   opacity: 1;
   transition: 0.2s;
+}
+#music-playlist .song-link.active {
+  background: #35353516;
 }
 #music-playlist.active .song-link{
   opacity: 1;
@@ -179,7 +186,6 @@ button:hover  {
   margin: 0;
   font-size: 1.4em;
   text-transform: uppercase;
-  
 }
 .music-container.play .music-info {
   opacity: 1;

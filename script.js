@@ -28,7 +28,7 @@ let loadSongError = false
 // const songs =  ['hey', 'summer', 'ukulele'];
 
 // слежение за песнями
-let songIndex = 1;
+let songIndex = 0;
 
 // инициализация загрузки песни в ДОМ
 loadSong(songs[songIndex]);
@@ -41,6 +41,7 @@ function loadSong(song) {
   title.innerText = song;
   audio.src = `music/${song}.mp3`;
   cover.src = `images/${song}.jpg`;
+  // activeSong()
 }
 
 // создание плейлиста
@@ -81,7 +82,7 @@ function playSong() {
     playBtn.querySelector('i.fas').classList.add('fa-pause');
     audioTimeCounter();
     audio.play();
-    musicContainer.classList.add('play');
+    musicContainer.classList.add('play');    
   }, 10);
 }
 
@@ -112,25 +113,24 @@ function setProgress(e) {
   audio.currentTime = (clickX / width) * duration;
 }
 
-// функция записи cookie уровня громкости
+// функция записи в localStorage уровня громкости
 function setVolumeCoocie() {
   localStorage.setItem('LSVolumeLavel', audio.volume);
 }
 
 //регулировка звука
-let btnClick = false;
+let btnClickvolumevolume = false;
 let intervalVolumeListener;
 const volumeDeviation = 0.05;
-
 function volumeplus() {
-  if (btnClick == true) {
+  if (btnClickvolume == true) {
     audio.volume = Math.min(1, audio.volume + volumeDeviation);
     volumeRange.value = audio.volume * 100;
     setVolumeCoocie();
   }
 }
 function volumeminus() {
-  if (btnClick == true) {
+  if (btnClickvolume == true) {
     audio.volume = Math.max(0, audio.volume - volumeDeviation);
     volumeRange.value = audio.volume * 100;
     setVolumeCoocie();
@@ -151,37 +151,44 @@ playBtn.addEventListener('click', () => {
   }
 })
 volumePlus.addEventListener('mousedown', () => {
-  btnClick = true
+  btnClickvolume = true
   intervalVolumeListener = setInterval(volumeplus, 50)
 }, false)
 volumePlus.addEventListener('mouseup', () => {
-  btnClick = false
+  btnClickvolume = false
   clearInterval(intervalVolumeListener)
   setVolumeCoocie()
 }, false)
 volumeMinus.addEventListener('mousedown', () => {
-  btnClick = true
+  btnClickvolume = true
   intervalVolumeListener = setInterval(volumeminus, 50)
-
 }, false)
 volumeMinus.addEventListener('mouseup', () => {
-  btnClick = false
+  btnClickvolume = false
   clearInterval(intervalVolumeListener)
   setVolumeCoocie()
 }, false)
 musicPlaylistBtn.addEventListener('click', () => {
   musicPlaylist.classList.toggle("active")
 })
-let songLinks = musicPlaylist.querySelectorAll('.song-link')
-songLinks.forEach(songLink => {
-  songLink.addEventListener('click', () => {
-    title.innerText = songLink.innerText;
-    audio.src = `music/${songLink.innerText}.mp3`;
-    cover.src = `images/${songLink.innerText}.jpg`;
-    playSong()
-  })
-});
 
+
+// отслеживание клика в плейлисте
+let songLinks = musicPlaylist.querySelectorAll('.song-link')
+function clearPlaylistActive() {
+  for (let index = 0; index < songLinks.length; index++) {
+    const element = songLinks[index];
+    element.classList.remove('active')
+  }
+}
+for (let index = 0; index < songLinks.length; index++) {
+    songLinks[index].onclick = function(){
+      loadSong(songs[index]);
+      clearPlaylistActive()
+      songLinks[index].classList.add('active')
+      playSong()
+  }
+}
 
 // функции переключения песен
 function prevSong() {
@@ -191,9 +198,11 @@ function prevSong() {
   }
   clearInterval(intervalAudioTimeCounter)
   loadSong(songs[songIndex])
+  clearPlaylistActive()
+  songLinks[songIndex].classList.add('active')
   playSong()
+  
 }
-
 function nextSong() {
   songIndex++
   if (songIndex > songs.length - 1) {
@@ -201,8 +210,9 @@ function nextSong() {
   }
   clearInterval(intervalAudioTimeCounter)
   loadSong(songs[songIndex])
+  clearPlaylistActive()
+  songLinks[songIndex].classList.add('active')
   playSong()
-
 }
 
 // события песен
