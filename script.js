@@ -83,6 +83,7 @@ function playSong() {
     audioTimeCounter();
     audio.play();
     musicContainer.classList.add('play');    
+    
   }, 10);
 }
 
@@ -144,11 +145,14 @@ volumeRange.oninput = function () {
 // Event listeners
 playBtn.addEventListener('click', () => {
   const isPlaying = musicContainer.classList.contains('play')
+  
   if (isPlaying) {
     pauseSong()
   } else {
     playSong()
   }
+  clearPlaylistActive()
+  songLinks[songIndex].classList.add('active')  
 })
 volumePlus.addEventListener('mousedown', () => {
   btnClickvolume = true
