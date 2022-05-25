@@ -1,2 +1,2 @@
-# music-playerr
+# Gh-pages: https://gariell.github.io/music-player/
  
